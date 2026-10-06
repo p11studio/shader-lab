@@ -1,0 +1,985 @@
+.shader-lab {
+  --lab-bg: #070b11;
+  --lab-panel: #0c121b;
+  --lab-panel-strong: #111a26;
+  --lab-border: rgba(154, 179, 208, 0.16);
+  --lab-border-strong: rgba(77, 224, 210, 0.5);
+  --lab-text: #f4f8fc;
+  --lab-muted: #94a7bc;
+  --lab-teal: #4de0d2;
+  --lab-cyan: #7dd3fc;
+  --lab-pill-bg: #14181f;
+  --lab-pill-fill: #23303f;
+  min-height: 100vh;
+  padding: 28px;
+  color: var(--lab-text);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(20, 184, 166, 0.12), transparent 34%),
+    radial-gradient(circle at 86% 8%, rgba(139, 92, 246, 0.09), transparent 30%), var(--lab-bg);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color-scheme: dark;
+}
+
+.shader-lab *,
+.shader-lab *::before,
+.shader-lab *::after {
+  box-sizing: border-box;
+}
+
+.shader-lab button,
+.shader-lab input,
+.shader-lab select {
+  font: inherit;
+}
+
+.shader-lab button,
+.shader-lab select,
+.shader-lab input {
+  outline: none;
+}
+
+.shader-lab button:focus-visible,
+.shader-lab a:focus-visible,
+.shader-lab select:focus-visible,
+.shader-lab input:focus-visible {
+  box-shadow: 0 0 0 3px rgba(77, 224, 210, 0.28);
+  border-color: var(--lab-teal);
+}
+
+.shader-lab__eyebrow {
+  color: var(--lab-teal);
+  font-size: 0.71rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.shader-lab__back-link {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  color: #d7e5f3;
+  border: 1px solid var(--lab-border);
+  border-radius: 10px;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.shader-lab__back-link:hover {
+  border-color: rgba(125, 211, 252, 0.52);
+  background: rgba(125, 211, 252, 0.07);
+}
+
+.shader-lab__workspace {
+  width: min(1560px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(290px, 354px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.shader-lab__panel,
+.shader-lab__stage {
+  border: 1px solid var(--lab-border);
+  border-radius: 18px;
+  background: rgba(12, 18, 27, 0.88);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.shader-lab__panel {
+  max-height: calc(100vh - 52px);
+  overflow: auto;
+  position: sticky;
+  top: 26px;
+  scrollbar-color: rgba(125, 211, 252, 0.3) transparent;
+}
+
+/* Topbar movido dentro del panel para que el stage aproveche todo el alto */
+.shader-lab__panel-topbar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.shader-lab__panel-topbar h1 {
+  margin: 5px 0 0;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: -0.045em;
+  color: var(--lab-text);
+}
+
+.shader-lab__panel-topbar p {
+  margin: 8px 0 0;
+  color: var(--lab-muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.shader-lab__panel-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.shader-lab__panel-section:last-child {
+  border-bottom: 0;
+}
+
+.shader-lab__panel h2,
+.shader-lab__stage h2 {
+  margin: 3px 0 0;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.shader-lab__section-label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--lab-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.shader-lab__section-heading,
+.shader-lab__stage-toolbar,
+.shader-lab__preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.shader-lab__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Tarjeta selectora de preset: <select> real superpuesto e invisible sobre
+   una tarjeta decorativa (miniatura + nombre + descripción + chevron). */
+.shader-lab__preset-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--lab-border);
+  border-radius: 12px;
+  background: var(--lab-panel);
+}
+
+.shader-lab__preset-card-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.shader-lab__preset-thumbnail {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+}
+
+.shader-lab__preset-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shader-lab__preset-card-footer > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.shader-lab__preset-card-footer strong {
+  color: var(--lab-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.shader-lab__preset-card-footer span {
+  overflow: hidden;
+  color: #8a9cb0;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shader-lab__preset-card-footer svg {
+  flex-shrink: 0;
+  color: #8a9cb0;
+}
+
+.shader-lab__controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 12px;
+}
+
+.shader-lab__controls-header > span {
+  color: #8a9cb0;
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.shader-lab__controls-header button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  color: #6b7d92;
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.shader-lab__controls-header button:hover {
+  color: var(--lab-cyan);
+}
+
+/* Filas "pill": mismo lenguaje visual para colores, sliders, switches y
+   botones del panel — fondo oscuro plano, radio 8px, apilado con gap 4px. */
+.shader-lab__pill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shader-lab__pill {
+  min-width: 0;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--lab-pill-bg);
+}
+
+.shader-lab__pill--color {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.shader-lab__pill--color label {
+  overflow: hidden;
+  color: #dce8f4;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shader-lab__pill-color-value {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.shader-lab__pill-color-value output {
+  color: #8a9cb0;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.shader-lab__pill-color-value input[type='color'] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.shader-lab__pill--range {
+  position: relative;
+  overflow: hidden;
+}
+
+.shader-lab__pill-range-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.shader-lab__pill-range-input::-webkit-slider-thumb {
+  width: 2px;
+  height: 38px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.shader-lab__pill-range-input::-moz-range-thumb {
+  width: 2px;
+  height: 38px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.shader-lab__pill-range-input::-moz-range-track {
+  border: none;
+  background: transparent;
+}
+
+.shader-lab__pill-range-overlay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.shader-lab__pill-range-overlay span {
+  overflow: hidden;
+  color: #dce8f4;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shader-lab__pill-range-overlay output {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--lab-cyan);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.shader-lab__pill--toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.shader-lab__pill--toggle > span {
+  color: #dce8f4;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.shader-lab__pill--action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: #dce8f4;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.shader-lab__pill--action:hover {
+  background: #1a2029;
+}
+
+.shader-lab__dialkit-toggle {
+  height: auto;
+  padding: 8px 12px;
+  border: 1px solid var(--lab-border);
+  background: transparent;
+}
+
+.shader-lab__dialkit-toggle.is-disabled {
+  opacity: 0.5;
+}
+
+.shader-lab__toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Switch accesible: checkbox real oculto visualmente pero enfocable/clicable. */
+.shader-lab__switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  cursor: pointer;
+}
+
+.shader-lab__switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.shader-lab__switch-track {
+  width: 32px;
+  height: 18px;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #263447;
+  transition: background-color 150ms ease;
+}
+
+.shader-lab__switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #94a7bc;
+  transition: transform 150ms ease;
+}
+
+.shader-lab__switch input:checked + .shader-lab__switch-track {
+  background: #22c7b9;
+}
+
+.shader-lab__switch input:checked + .shader-lab__switch-track .shader-lab__switch-thumb {
+  background: #ffffff;
+  transform: translateX(14px);
+}
+
+.shader-lab__switch input:focus-visible + .shader-lab__switch-track {
+  box-shadow: 0 0 0 3px rgba(77, 224, 210, 0.28);
+}
+
+.shader-lab__switch:has(input:disabled) {
+  cursor: not-allowed;
+}
+
+.shader-lab__button,
+.shader-lab__text-button,
+.shader-lab__saved-actions button {
+  color: #dce8f4;
+  border: 1px solid var(--lab-border);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.shader-lab__button {
+  min-height: 40px;
+  padding: 8px 13px;
+  font-size: 0.77rem;
+  font-weight: 650;
+}
+
+.shader-lab__button:hover,
+.shader-lab__text-button:hover,
+.shader-lab__saved-actions button:hover {
+  color: #ffffff;
+  border-color: rgba(77, 224, 210, 0.45);
+  background: rgba(77, 224, 210, 0.08);
+}
+
+.shader-lab__button--primary {
+  color: #051313;
+  border-color: #62e9de;
+  background: linear-gradient(135deg, #77efe5, #65c8f4);
+}
+
+.shader-lab__button--primary:hover {
+  color: #020707;
+  background: linear-gradient(135deg, #95f7ef, #88daf9);
+}
+
+.shader-lab__text-button {
+  padding: 6px 8px;
+  font-size: 0.7rem;
+}
+
+.shader-lab__empty,
+.shader-lab__motion-note {
+  margin: 10px 0 0;
+  color: var(--lab-muted);
+  font-size: 0.77rem;
+  line-height: 1.5;
+}
+
+.shader-lab__save-form {
+  display: grid;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.shader-lab__save-form > label {
+  color: var(--lab-muted);
+  font-size: 0.72rem;
+}
+
+.shader-lab__save-form > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+}
+
+.shader-lab__save-form input[type='text'] {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 12px;
+  color: var(--lab-text);
+  border: none;
+  border-radius: 8px;
+  background: var(--lab-pill-bg);
+}
+
+.shader-lab__saved-list {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shader-lab__saved-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px;
+  border-radius: 8px;
+  background: var(--lab-pill-bg);
+}
+
+.shader-lab__saved-list li > div {
+  min-width: 0;
+  display: grid;
+}
+
+.shader-lab__saved-list strong {
+  overflow: hidden;
+  color: #dce8f4;
+  font-size: 0.73rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shader-lab__saved-list li > div span {
+  color: var(--lab-muted);
+  font-size: 0.64rem;
+}
+
+.shader-lab__saved-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.shader-lab__saved-actions button {
+  padding: 5px 7px;
+  font-size: 0.64rem;
+}
+
+.shader-lab__stage {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  padding: 20px;
+}
+
+.shader-lab__stage-toolbar {
+  margin-bottom: 16px;
+}
+
+/* Pausa de movimiento y presets locales comparten la barra del lienzo. */
+.shader-lab__stage-extras {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.shader-lab__stage-extras .shader-lab__pill--toggle,
+.shader-lab__stage-extras .shader-lab__pill--action {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.shader-lab__stage-extras .shader-lab__pill--action {
+  padding: 0 14px;
+}
+
+.shader-lab__stage-extras .shader-lab__motion-note,
+.shader-lab__stage-extras .shader-lab__empty {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+.shader-lab__stage-extras .shader-lab__section-label {
+  margin: 0 0 0 4px;
+  white-space: nowrap;
+}
+
+.shader-lab__save-form--compact {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+
+.shader-lab__save-form--compact input[type='text'] {
+  width: 160px;
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--lab-text);
+  border: none;
+  border-radius: 8px;
+  background: var(--lab-pill-bg);
+  font-size: 0.78rem;
+}
+
+.shader-lab__save-form--compact .shader-lab__button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.shader-lab__preset-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+}
+
+/* Chip = nombre clicable (carga el preset) + una cruz chica para borrar,
+   en vez de dos botones grandes "Cargar"/"Eliminar". */
+.shader-lab__preset-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--lab-pill-bg);
+}
+
+.shader-lab__preset-chip-load {
+  max-width: 160px;
+  overflow: hidden;
+  padding: 6px 4px 6px 10px;
+  color: #dce8f4;
+  border: none;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.shader-lab__preset-chip-load:hover {
+  color: #ffffff;
+}
+
+.shader-lab__preset-chip-remove {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  padding: 0;
+  color: var(--lab-muted);
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.shader-lab__preset-chip-remove:hover {
+  color: #ffffff;
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.shader-lab__previews {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: 14px;
+  /* No estirar las tarjetas a la altura de la más alta: cada una mide lo
+     que necesita su propio contenido, así el canvas (altura fija, ver
+     .shader-lab__canvas) siempre queda igual en A y en B sin importar
+     cuántas filas tenga la lista de settings de cada lado. */
+  align-items: start;
+}
+
+.shader-lab__previews--split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.shader-lab__preview-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid var(--lab-border);
+  border-radius: 14px;
+  background: #080d13;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.shader-lab__preview-card.is-active {
+  border-color: var(--lab-border-strong);
+  box-shadow: 0 0 0 1px rgba(77, 224, 210, 0.12);
+}
+
+.shader-lab__preview-header {
+  padding: 3px 4px 11px;
+}
+
+.shader-lab__preview-header h2 {
+  margin: 2px 0 0;
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.shader-lab__canvas {
+  width: 100%;
+  min-width: 0;
+  /* Altura fija (no flex:1): si no, el preview se estira o encoge según
+     cuántas filas tenga la lista de settings de abajo, y A/B dejan de medir
+     lo mismo. Ver el shader es la prioridad frente a la lista de settings
+     (información secundaria), por eso es el doble que antes. */
+  height: 640px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 40px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  /* Fondo plano neutro: el fondo real (Ninguno/Color sólido/Degradado,
+     + estrellas) lo pinta cada efecto en su propia escena three.js
+     (scene.background), controlable por preset — ver "Tipo de fondo" en
+     el panel. Antes había un degradado fijo acá que ningún control podía
+     tocar; se eliminó. */
+  background: #080d13;
+}
+
+.shader-lab__shader {
+  position: absolute !important;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.92;
+}
+
+.shader-lab__shader canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.shader-lab__fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  padding: 20px;
+  color: #ffffff;
+  text-align: center;
+  background: rgba(5, 10, 17, 0.28);
+}
+
+.shader-lab__fallback span {
+  color: #c0d0e1;
+  font-size: 0.78rem;
+}
+
+/* Resumen de settings por tarjeta: lista de filas compacta (ancho = su
+   propio contenido, NO el ancho completo de la tarjeta) para que el valor
+   quede a una distancia fija del label en vez de pegado al borde derecho
+   con un hueco enorme en el medio. La columna de labels se autoajusta al
+   label más largo (grid), y el valor arranca 40px después de ese punto. */
+.shader-lab__summary {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 12px;
+  border-top: 1px solid var(--lab-border);
+}
+
+.shader-lab__summary-row {
+  display: contents;
+}
+
+.shader-lab__summary-label {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(154, 179, 208, 0.1);
+  color: #91a7bd;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.shader-lab__summary-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 7px 0 7px 40px;
+  border-bottom: 1px solid rgba(154, 179, 208, 0.1);
+  color: var(--lab-text);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.shader-lab__summary-row--library .shader-lab__summary-label,
+.shader-lab__summary-row--library .shader-lab__summary-value {
+  color: var(--lab-cyan);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.62rem;
+}
+
+/* Un control cuyo valor ya no es el default del preset: se resalta con el
+   mismo acento verde azulado que el resto del lab. */
+.shader-lab__summary-row.is-changed .shader-lab__summary-value {
+  color: var(--lab-teal);
+}
+
+.shader-lab__summary-swatch {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.shader-lab__sr-status {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 1120px) {
+  .shader-lab {
+    padding: 20px;
+  }
+
+  .shader-lab__workspace {
+    grid-template-columns: 310px minmax(0, 1fr);
+  }
+
+  .shader-lab__previews--split {
+    grid-template-columns: 1fr;
+  }
+
+  .shader-lab__canvas {
+    height: 560px;
+    padding: 28px;
+  }
+}
+
+@media (max-width: 820px) {
+  .shader-lab__workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .shader-lab__panel {
+    max-height: none;
+    position: static;
+  }
+
+  .shader-lab__stage {
+    align-self: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .shader-lab {
+    padding: 14px;
+  }
+
+  .shader-lab__panel-topbar {
+    padding: 16px;
+  }
+
+  .shader-lab__back-link {
+    align-self: flex-start;
+  }
+
+  .shader-lab__stage {
+    padding: 10px;
+  }
+
+  .shader-lab__canvas {
+    height: 660px;
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shader-lab *,
+  .shader-lab *::before,
+  .shader-lab *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (min-width: 1121px) {
+  .shader-lab__previews--split .shader-lab__canvas {
+    height: 400px;
+  }
+}
